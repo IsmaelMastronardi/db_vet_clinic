@@ -67,3 +67,54 @@ UPDATE animals SET weight_kg = weight_kg * -1 WHERE weight_kg < 0;
 SELECT * FROM animals;
 COMMIT;
 SELECT * FROM animals;
+
+
+-- DAY 3
+
+SELECT name AS animal, owners.full_name AS owner
+FROM animals
+INNER JOIN owners
+ON animals.owner_id = owners.id
+WHERE owners.id = 4;
+
+SELECT animals.name AS is_pokemon
+FROM animals
+INNER JOIN species
+ON animals.species_id = species.id
+WHERE species.id = 1;
+
+SELECT full_name AS owner, animals.name AS animal
+FROM owners
+LEFT JOIN animals
+ON owners.id = owner_id;
+
+SELECT species.name AS species,COUNT(*)
+FROM species
+INNER join animals
+ON species.id = species_id
+GROUP BY species.name;
+
+SELECT animals.name AS animal , full_name AS owner , species.name AS species
+FROM animals
+INNER JOIN owners
+ON owner_id = owners.id
+INNER JOIN species
+ON species_id = species.id
+WHERE owner_id = 2 AND species_id = 1;
+
+SELECT animals.name
+FROM animals
+INNER JOIN owners
+ON owner_id = owners.id
+WHERE owner_id = 5 AND escape_attempts = 0;
+
+SELECT subq.full_name, MAX(subq.owned)
+FROM (
+SELECT owners.full_name, COUNT(*) AS owned
+FROM owners
+INNER JOIN animals ON owners.id = animals.owner_id
+GROUP BY owners.full_name
+)AS subq
+GROUP BY subq.full_name
+ORDER BY MAX(subq.owned) desc
+LIMIT 1;

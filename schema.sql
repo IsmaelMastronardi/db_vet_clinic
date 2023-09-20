@@ -10,7 +10,7 @@ CREATE TABLE animals (
     neutered BOOLEAN NOT NULL,
     weight_kg DECIMAL(10,2) NOT NULL,
     species_id INT 
-    owener_id INT 
+    owner_id INT 
     Foreign-key constraints:
         "fk_owner_id" FOREIGN KEY (owner_id) REFERENCES owners(id)
         "fk_species_id" FOREIGN KEY (species_id) REFERENCES species(id)
