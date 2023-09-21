@@ -118,3 +118,110 @@ GROUP BY owners.full_name
 GROUP BY subq.full_name
 ORDER BY MAX(subq.owned) desc
 LIMIT 1;
+
+
+--DAY 4
+
+SELECT subq.last_date_of_visit, vets.name AS vet , animals.name AS animal
+FROM (
+SELECT MAX(date_of_visit) AS last_date_of_visit, vets_id
+FROM visits
+WHERE vets_id = 1
+GROUP BY vets_id 
+) AS subq
+INNER JOIN vets ON subq.vets_id = vets.id
+INNER JOIN visits ON subq.last_date_of_visit = visits.date_of_visit AND subq.vets_id = visits.vets_id
+INNER JOIN animals ON visits.animals_id = animals.id;
+
+
+SELECT COUNT(DISTINCT animals_id)
+FROM visits
+WHERE vets_id = 3;
+
+
+SELECT vets.name, species.name AS speciality
+FROM vets
+LEFT JOIN specializations
+ON vets_id = vets.id
+LEFT JOIN species
+ON species_id = species.id
+GROUP BY vets.name, species.name;
+
+
+SELECT animals.name AS animal, date_of_visit
+FROM visits
+INNER JOIN animals
+ON animals_id = animals.id
+WHERE date_of_visit >= '2020-04-01' AND date_of_visit <= '2020-08-01' AND vets_id = 3;
+
+
+SELECT animals.name AS animal, MAX(subq.all_count) AS max_visits
+FROM (
+  SELECT animals_id, COUNT(*) AS all_count
+  FROM visits
+  GROUP BY animals_id
+) AS subq
+INNER JOIN animals ON subq.animals_id = animals.id
+GROUP BY animals.name
+ORDER BY MAX(subq.all_count) desc
+LIMIT 1;
+
+
+SELECT subq.last_date_of_visit, vets.name AS vet , animals.name AS animal
+FROM (
+SELECT MIN(date_of_visit) AS last_date_of_visit, vets_id
+FROM visits
+WHERE vets_id = 2
+GROUP BY vets_id 
+) AS subq
+INNER JOIN vets ON subq.vets_id = vets.id
+INNER JOIN visits ON subq.last_date_of_visit = visits.date_of_visit AND subq.vets_id = visits.vets_id
+INNER JOIN animals ON visits.animals_id = animals.id;
+
+
+SELECT 
+subq.last_date_of_visit AS date, 
+vets.name AS vet , 
+animals.name AS animal, 
+species.name AS species,
+vets.age AS vet_age,
+vets.date_of_graduation AS vet_graduation_date
+FROM (
+SELECT MAX(date_of_visit) AS last_date_of_visit, vets_id
+FROM visits
+GROUP BY vets_id 
+) AS subq
+INNER JOIN vets ON subq.vets_id = vets.id 
+INNER JOIN visits ON subq.last_date_of_visit = visits.date_of_visit AND subq.vets_id = visits.vets_id
+INNER JOIN animals ON visits.animals_id = animals.id
+INNER JOIN species ON animals.species_id = species.id
+ORDER BY subq.last_date_of_visit desc
+LIMIT 1;
+
+
+SELECT COUNT(num_visits)
+FROM (
+  SELECT
+  FROM visits
+  INNER JOIN animals ON visits.animals_id = animals.id
+  INNER JOIN vets ON vets_id = vets.id
+  WHERE vets.id NOT IN (
+    SELECT specializations.vets_id
+    FROM specializations
+    WHERE specializations.species_id = animals.species_id
+) 
+) AS num_visits;
+
+
+SELECT COUNT(animals.species_id) AS more_visits_from, species.name FROM visits 
+INNER JOIN animals ON visits.animals_id = animals.id
+INNER JOIN vets ON visits.vets_id = vets.id
+INNER JOIN species ON animals.species_id = species.id
+WHERE vets_id = 2
+GROUP BY animals.species_id, species.name
+ORDER BY more_visits_from DESC
+LIMIT 1;
+
+
+
+
