@@ -29,3 +29,29 @@ CREATE TABLE species (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(50)
 );
+
+--DAY 4
+
+CREATE TABLE vets (
+id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+name VARCHAR(100) NOT NULL,
+age INT NOT NULL,
+date_of_graduation DATE NOT NULL 
+);
+
+CREATE TABLE specializations (
+species_id INT NOT NULL,
+vets_id INT NOT NULL,
+PRIMARY KEY (species_id, vets_id),
+FOREIGN KEY (species_id) REFERENCES species(id),
+FOREIGN KEY (vets_id) REFERENCES vets(id)
+);
+
+CREATE TABLE visits (
+animals_id INT NOT NULL,
+vets_id INT NOT NULL,
+date_of_visit DATE NOT NULL,
+PRIMARY KEY (animals_id, vets_id, date_of_visit),
+FOREIGN KEY(animals_id) REFERENCES animals(id),
+FOREIGN KEY(vets_id) REFERENCES vets(id)
+);
